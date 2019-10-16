@@ -183,7 +183,8 @@ class Reversi:
         
         if self.game_end:
             print('winner:', ('DRAW', 'WHITE', 'BLACK')[self.winner])
-            print('no:{} white:{} black:{}'.format(self.count, self.white_count, self.black_count))
+            print('no:{} white:{} black:{} pass:{}'.format(
+                self.count, self.white_count, self.black_count, self.pass_count))
         else:
             print('no:{} white:{} black:{} pass:{} turn:{}'.format(
                 self.count, self.white_count, self.black_count, self.pass_count, STONE[self.turn]))
@@ -241,6 +242,8 @@ class InputPlayer(Player):
             except:
                 # その他のエラーはやり直す
                 print('invalid value..')
+        
+        return index
 
 class Game:
     """ ゲームクラス """
