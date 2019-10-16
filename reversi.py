@@ -188,8 +188,15 @@ class Reversi:
         else:
             print('no:{} white:{} black:{} pass:{} turn:{}'.format(
                 self.count, self.white_count, self.black_count, self.pass_count, STONE[self.turn]))
-
+        
+        print('  ', end='')
         for i in range(self.size):
+            print('{} '.format(i), end='')
+        print()
+            
+        for i in range(self.size):
+            print('{} '.format(i), end='')
+            
             for j in range(self.size):
                 s = self.board[i, j]
                 if (i, j) in self.available_pos:
