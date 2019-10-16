@@ -1,7 +1,6 @@
 
 
 ```python
-import random
 from reversi import *
 ```
 
