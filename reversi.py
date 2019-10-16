@@ -46,28 +46,38 @@ class Reversi:
         # 有効な位置を返す
         return [tuple(pos) for pos in empty_pos if self.is_available(pos)]
     
+    def pass_and_change(self):
+        self.pass_count += 1
+        self.change_turn()
+        self.check_game_end()
+        
     def put_stone(self, pos):
         """ 石を置く """
         
         pos = np.array(pos)
         
-        if self.is_available(pos):
-            self.count += 1
-            
-            self.board[pos[0], pos[1]] = self.turn
-            self.reverse(pos)
-            self.change_turn()
-            
-            if len(self.available_pos) == 0:
-                self.pass_count += 1
-                self.change_turn()
-
-            self.count_stone()
-            self.check_game_end()
-
-            return True
-        else:
+        if not self.is_available(pos):
             return False
+        
+        self.count += 1
+        self.board[pos[0], pos[1]] = self.turn
+        self.reverse(pos)
+        self.change_turn()
+        self.count_stone()
+        self.check_game_end()
+            
+        if self.game_end:
+            return True
+        
+        if len(self.available_pos) == 0:
+            self.pass_and_change()
+        
+            if self.game_end:
+                return True
+            elif len(self.available_pos) == 0:
+                self.pass_and_change()
+        
+        return True
     
     def next_turn(self):
         """ 次のターンを取得 """
@@ -86,8 +96,8 @@ class Reversi:
     
     def check_game_end(self):
         """ ゲーム終了かをチェック """
-        
-        if np.count_nonzero(self.board) == self.size * self.size or self.pass_count == 2:
+
+        if np.count_nonzero(self.board) == self.size * self.size or self.pass_count > 1:
             self.game_end = True
             if self.black_count == self.white_count:
                 self.winner = NONE
@@ -172,7 +182,7 @@ class Reversi:
         """ コンソール表示 """
         
         if self.game_end:
-            print('winner:', ('draw', 'o', 'x')[self.winner])
+            print('winner:', ('DRAW', 'WHITE', 'BLACK')[self.winner])
             print('no:{} white:{} black:{}'.format(self.count, self.white_count, self.black_count))
         else:
             print('no:{} white:{} black:{} pass:{} turn:{}'.format(
@@ -248,7 +258,6 @@ class Game:
         while not self.reversi.game_end:
             # 今回のプレイヤー
             p = self.p1 if self.reversi.turn == self.p1.stone else self.p2
-            
             # 石を置く
             self.reversi.put_stone(p.move(self.reversi))
             # 表示
